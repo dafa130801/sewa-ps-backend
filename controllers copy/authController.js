@@ -66,8 +66,8 @@ exports.login = async (req, res) => {
       token,
       user: { id: user.id, username: user.username, role: user.role }
     });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Terjadi kesalahan pada server.' });
-  }
+  } catch (error) {
+  console.error("DB Error:", error);
+  res.status(500).json({ message: error.message || "Terjadi kesalahan pada server." });
+}
 };
