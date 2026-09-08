@@ -1,6 +1,6 @@
-// =========================================
+// ===================================================
 // KONEKSI DATABASE (MySQL) - menggunakan connection pool
-// =========================================
+// ===================================================
 require('dotenv').config();
 const mysql = require('mysql2/promise');
 
@@ -11,7 +11,9 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME || 'sewa_ps',
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  connectTimeout: 10000,
+  ssl: { rejectUnauthorized: false }
 });
 
 module.exports = pool;
