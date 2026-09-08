@@ -31,26 +31,6 @@ exports.getAll = async (req, res) => {
 };
 
 // Buat transaksi sewa baru (bisa dilakukan oleh role apapun yang sudah login)
-// Lihat jadwal yang sudah dibooking untuk 1 unit tertentu (dipakai frontend saat pilih unit)
-exports.jadwalPerUnit = async (req, res) => {
-  try {
-    const { consoleId } = req.params;
-    const [rows] = await pool.query(
-      `SELECT jam_mulai, durasi_jam, nama_penyewa
-       FROM rentals
-       WHERE console_id = ?
-         AND status NOT IN ('selesai', 'batal')
-         AND DATE_ADD(jam_mulai, INTERVAL durasi_jam HOUR) > NOW()
-       ORDER BY jam_mulai ASC`,
-      [consoleId]
-    );
-    res.json(rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Gagal mengambil jadwal.' });
-  }
-};
-
 exports.create = async (req, res) => {
   const connection = await pool.getConnection();
   try {
