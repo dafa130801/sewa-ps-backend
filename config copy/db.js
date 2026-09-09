@@ -11,7 +11,8 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME || 'sewa_ps',
   waitForConnections: true,
   connectionLimit: 2,
-  queueLimit: 0
+  queueLimit: 0,
+  timezone: '+07:00'
 });
 
 module.exports = pool;

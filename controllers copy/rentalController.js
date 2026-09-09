@@ -32,7 +32,10 @@ exports.create = async (req, res) => {
   try {
     const { console_id, no_hp, durasi_jam, jam_mulai } = req.body;
     const nama_penyewa = req.body.nama_penyewa || req.user.username;
-
+let formatted_jam_mulai = jam_mulai;
+if (typeof jam_mulai === 'string' && jam_mulai.includes('T')) {
+  formatted_jam_mulai = jam_mulai.replace('T', ' ').substring(0, 19);
+}
     if (!console_id || !durasi_jam || !jam_mulai) {
       return res.status(400).json({ message: 'Console, jam mulai, dan durasi wajib diisi.' });
     }
@@ -55,7 +58,7 @@ exports.create = async (req, res) => {
          AND status NOT IN ('selesai', 'batal')
          AND jam_mulai < DATE_ADD(?, INTERVAL ? HOUR)
          AND DATE_ADD(jam_mulai, INTERVAL durasi_jam HOUR) > ?`,
-      [console_id, jam_mulai, durasi_jam, jam_mulai]
+      [console_id, formatted_jam_mulai, durasi_jam, formatted_jam_mulai]
     );
     if (bentrok.length > 0) {
       await connection.rollback();
@@ -66,7 +69,7 @@ exports.create = async (req, res) => {
 
     const [result] = await connection.query(
       'INSERT INTO rentals (console_id, user_id, nama_penyewa, no_hp, jam_mulai, durasi_jam, total_harga) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [console_id, req.user.id, nama_penyewa, no_hp || null, jam_mulai, durasi_jam, totalHarga]
+      [console_id, req.user.id, nama_penyewa, no_hp || null, formatted_jam_mulai, durasi_jam, totalHarga]
     );
 
     await connection.commit();
